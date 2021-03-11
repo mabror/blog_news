@@ -1,20 +1,43 @@
 from os import name
-from django.shortcuts import redirect, render
-from .forms import LoginForm, RegisterForm, PostForm
+from django.shortcuts import redirect, render, get_object_or_404
+from .forms import LoginForm, RegisterForm, PostForm, CommentForm
 from django.contrib.auth import authenticate, login, logout
 from apple.decorators import anonymous_required
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Post
+from .models import Post, Comment
 from django.core.paginator import Paginator
 from django.views.generic import ListView
 
 
-class index(ListView):
+class Index(ListView):
     model = Post
     context_object_name = 'posts'
     ordering = ['-post_added']
     paginate_by = 2
     template_name = 'main/index.html'
+
+
+def comment(request, id):
+    post = get_object_or_404(Post, id=id)
+    posts = Post.objects.get(id=id)
+    comment = Comment.objects.filter(post=id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.post = post
+            form.save()
+            return redirect('main-page')
+    form = CommentForm()
+    context = {
+        'form': form,
+        'comments': comment,
+        'post': post,
+        'posts': posts,
+    }
+    return render(request, 'main/comment.html', context)
 
 
 @anonymous_required('main-page')
@@ -95,3 +118,18 @@ def posts(request, id):
     post = Post.objects.get(id=id)
     form = PostForm({'title': post.title, 'content': post.content, 'photo': post.photo})
     return render(request, 'main/posts.html', {'id': id, 'post': post, 'form': form})
+
+
+def add_like(request, id):
+    post = Post.objects.get(id=id)
+    post.like += 1
+    post.save()
+    return redirect('main-page')
+
+
+def diz_like(request, id):
+    post = Post.objects.get(id=id)
+    post.dislike += 1
+    post.save()
+    return redirect('main-page')
+

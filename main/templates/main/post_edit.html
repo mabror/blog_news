@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <div class="login">
+    <div class="login" style="max-height: 400px; overflow: auto; min-width: 50%;">
         <h3 class="login__title title text-center">Create Post</h3>
         <form action="{% url 'post-edit' id %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}

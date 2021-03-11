@@ -2,7 +2,7 @@ from django import forms
 import django
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from .models import Post
+from .models import Post, Comment
 from django.utils.translation import gettext_lazy as _
 
 
@@ -27,9 +27,15 @@ class LoginForm(forms.Form):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title_uz', 'title_ru', 'title_en', 'content_uz','content_ru', 'content_en', 'photo']
+        fields = ['title_uz', 'title_ru', 'title_en', 'content_uz', 'content_ru', 'content_en', 'photo']
         labels = {
             'title': _('Mavzu'),
             'content': _('Kontent'),
             'photo': _('Rasm')
         }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('text',)

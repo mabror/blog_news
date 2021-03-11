@@ -22,6 +22,8 @@ class Post(models.Model):
     content_uz = models.TextField(null=True, blank=True)
     content_ru = models.TextField(default=None, null=True, blank=True)
     content_en = models.TextField(default=None, null=True, blank=True)
+    like = models.IntegerField(default=0)
+    dislike = models.IntegerField(default=0)
     post_added = models.DateTimeField(auto_now_add=True)
     photo = models.ImageField(default="download.jpeg",
                               upload_to=convert_fn,
@@ -57,3 +59,10 @@ class Post(models.Model):
     def content(self):
         column = 'content_{}'.format(get_language())
         return getattr(self, column)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    post = models.ForeignKey(Post, on_delete=models.RESTRICT)
+    text = models.TextField()
+    comment_date = models.DateTimeField(auto_now_add=True)
