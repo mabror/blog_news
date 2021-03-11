@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block body %} style="background-image: url('{% static 'main/img/home-bg.jpg' %}')" {% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-offset-6">
+                <form action="{% url 'posts-page' id %}" method="GET" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <h3>{{ form.title }}</h3>
+                    <img src="{{ post.photo.url }}" alt="" style="width: 800px;">
+                    <h6>{{ form.content }}</h6>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

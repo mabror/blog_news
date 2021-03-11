@@ -1,0 +1,118 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block content %}
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header" style="background-image: url('{% static 'main/img/home-bg.jpg' %}')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="site-heading">
+                        <h1>{% trans 'Yangiliklar Blogi' %}</h1>
+                        <hr class="small">
+                        <span class="subheading">A Clean Blog Theme by Start Bootstrap</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-6 mx-auto">
+                {% for post in posts %}
+                    <div class="post-preview">
+                        <img class="mx-auto img-responsive" src="{{ post.photo.url }}" style="width: 400px;" alt="rasm">
+                        <a href="{% url 'posts-page' post.id %}">
+                            <h2 class="post-title">
+                                {{ post.title }}
+                            </h2>
+                            <h3 class="post-subtitle">
+                                {{ post.content }}
+                            </h3>
+                        </a>
+                        <p class="post-meta">Posted by <a href="#">{{ post.user.username }}</a> on {{ post.post_added | date:'d F, Y, H:m' }}</p>
+                        {% if user.is_authenticated and post.user_id == user.id %}
+                            <a class="" href="{% url 'post-edit' post.id %}"><small><i>edit</i></small></a>
+                        {% endif %}
+                    </div>
+                    <hr>
+                {% endfor %}
+
+
+                
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_next %}
+                            <a class="btn" href="?page={{ page_obj.paginator.num_pages }}">first &raquo;</a>
+                            <a class="btn" href="?page={{ page_obj.next_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current btn">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+                        
+                        {% if page_obj.has_previous %}
+                            <a class="btn" href="?page={{ page_obj.previous_page_number }}">next</a>
+                            <a class="btn" href="?page=1">&laquo; last</a>
+                        {% endif %}
+                    </span>
+                </div>
+                <!-- <nav aria-label="Page navigation example"> -->
+              <!-- <ul class="pagination"> -->
+                <!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
+                <!-- <li class="page-item"><a class="page-link" href="#">1</a></li> -->
+                <!-- <li class="page-item"><a class="page-link" href="#">2</a></li> -->
+                <!-- <li class="page-item"><a class="page-link" href="#">3</a></li> -->
+                <!-- <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
+              <!-- </ul> -->
+            <!-- </nav>  -->
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="#">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright &copy; Your Website 2016</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock %}
+
