@@ -13,8 +13,15 @@ class Index(ListView):
     model = Post
     context_object_name = 'posts'
     ordering = ['-post_added']
-    paginate_by = 2
+    paginate_by = 4
     template_name = 'main/index.html'
+
+    def get_queryset(self):
+        query = super().get_queryset()
+        for q in self.request.GET.keys():
+            query = query.filter(title_uz__icontains=q)
+        print(query.query)
+        return query
 
 
 def comment(request, id):
@@ -132,4 +139,12 @@ def diz_like(request, id):
     post.dislike += 1
     post.save()
     return redirect('main-page')
+
+
+def filtr(request):
+    titles = [] # Post.objects.get(title=title)
+    filter = request.GET.keys()
+    print(filter)
+    return render(request, 'main/index.html', {'filtr': filtr})
+
 

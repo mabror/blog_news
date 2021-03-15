@@ -21,6 +21,7 @@
         </div>
     </header>
 
+
     <!-- Main Content -->
     <div class="container">
         <div class="row">
@@ -58,32 +59,42 @@
 
 
                 
-                <div class="pagination">
-                    <span class="step-links">
-                        {% if page_obj.has_next %}
-                            <a class="btn" href="?page={{ page_obj.paginator.num_pages }}">first &raquo;</a>
-                            <a class="btn" href="?page={{ page_obj.next_page_number }}">previous</a>
-                        {% endif %}
-
-                        <span class="current btn">
-                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                        </span>
-                        
+{#                   <div class="pagination">#}
+{#                    <span class="step-links">#}
+{#                        {% if page_obj.has_next %}#}
+{#                            <a class="btn" href="?page={{ page_obj.paginator.num_pages }}">first &raquo;</a>#}
+{#                            <a class="btn" href="?page={{ page_obj.next_page_number }}">previous</a>#}
+{#                        {% endif %}#}
+{##}
+{#                        <span class="current btn">#}
+{#                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.#}
+{#                        </span>#}
+{#                        #}
+{#                        {% if page_obj.has_previous %}#}
+{#                            <a class="btn" href="?page={{ page_obj.previous_page_number }}">next</a>#}
+{#                            <a class="btn" href="?page=1">&laquo; last</a>#}
+{#                        {% endif %}#}
+{#                    </span>#}
+{#                </div>#}
+              <ul class="pager">
+                    <li class="next">
                         {% if page_obj.has_previous %}
-                            <a class="btn" href="?page={{ page_obj.previous_page_number }}">next</a>
-                            <a class="btn" href="?page=1">&laquo; last</a>
+                            <a href="?page=1">&laquo; first</a>
+{#                            <a href="?page={{ page_obj.previous_page_number }}"></a>#}
                         {% endif %}
-                    </span>
-                </div>
-                <!-- <nav aria-label="Page navigation example"> -->
-              <!-- <ul class="pagination"> -->
-                <!-- <li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
-                <!-- <li class="page-item"><a class="page-link" href="#">1</a></li> -->
-                <!-- <li class="page-item"><a class="page-link" href="#">2</a></li> -->
-                <!-- <li class="page-item"><a class="page-link" href="#">3</a></li> -->
-                <!-- <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
-              <!-- </ul> -->
-            <!-- </nav>  -->
+                    </li>
+
+                        <li class="next">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </li>
+
+                    <li>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
