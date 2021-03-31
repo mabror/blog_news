@@ -15,15 +15,14 @@ def convert_fn(self, file):
 
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)
-    title_uz = models.CharField(max_length=100, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='posts')
+    title_uz = models.CharField(max_length=100, null=True, blank=True, unique=True)
     title_ru = models.CharField(max_length=100, default=None, null=True, blank=True)
     title_en = models.CharField(max_length=100, default=None, null=True, blank=True)
     content_uz = models.TextField(null=True, blank=True)
     content_ru = models.TextField(default=None, null=True, blank=True)
     content_en = models.TextField(default=None, null=True, blank=True)
     like = models.IntegerField(default=0)
-    dislike = models.IntegerField(default=0)
     post_added = models.DateTimeField(auto_now_add=True)
     photo = models.ImageField(default="download.jpeg",
                               upload_to=convert_fn,
@@ -66,3 +65,9 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.RESTRICT)
     text = models.TextField()
     comment_date = models.DateTimeField(auto_now_add=True)
+
+
+class PostLIke(models.Model):
+    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    post = models.ForeignKey(Post, on_delete=models.RESTRICT)
+

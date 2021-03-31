@@ -4,9 +4,10 @@ from .forms import LoginForm, RegisterForm, PostForm, CommentForm
 from django.contrib.auth import authenticate, login, logout
 from apple.decorators import anonymous_required
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Post, Comment
+from .models import Post, Comment, PostLIke
 from django.core.paginator import Paginator
 from django.views.generic import ListView
+from django.contrib.auth.models import User
 
 
 class Index(ListView):
@@ -18,9 +19,15 @@ class Index(ListView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        for q in self.request.GET.keys():
-            query = query.filter(title_uz__icontains=q)
-        print(query.query)
+
+        title = self.request.GET.get("title")
+        if title:
+            query = query.filter(title_uz__icontains=title)
+        content = self.request.GET.get("content")
+        if content:
+            query = query.filter(content_uz__icontains=content)
+
+        # print(query.query)
         return query
 
 
@@ -108,7 +115,6 @@ def post_create(request):
     return render(request, 'main/post_create.html', {'form': form})
 
 
-@login_required
 def post_edit(request, id):
     post = Post.objects.get(id=id)
     if request.method == 'POST':
@@ -128,9 +134,15 @@ def posts(request, id):
 
 
 def add_like(request, id):
+    if PostLIke.objects.filter(user=request.user, post_id=id).exists():
+        return redirect('main-page')
+
     post = Post.objects.get(id=id)
     post.like += 1
     post.save()
+
+    PostLIke(post=post, user=request.user).save()
+
     return redirect('main-page')
 
 
@@ -139,12 +151,3 @@ def diz_like(request, id):
     post.dislike += 1
     post.save()
     return redirect('main-page')
-
-
-def filtr(request):
-    titles = [] # Post.objects.get(title=title)
-    filter = request.GET.keys()
-    print(filter)
-    return render(request, 'main/index.html', {'filtr': filtr})
-
-
