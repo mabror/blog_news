@@ -4,10 +4,15 @@ from .forms import LoginForm, RegisterForm, PostForm, CommentForm
 from django.contrib.auth import authenticate, login, logout
 from apple.decorators import anonymous_required
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Post, Comment, PostLIke
+from .models import Post, Comment, PostLIke, Group
 from django.core.paginator import Paginator
-from django.views.generic import ListView
+from django.views.generic import ListView, UpdateView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin, UserPassesTestMixin)
+from django.urls import reverse
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class Index(ListView):
@@ -31,6 +36,7 @@ class Index(ListView):
         return query
 
 
+@permission_required('main.add_comment')
 def comment(request, id):
     post = get_object_or_404(Post, id=id)
     posts = Post.objects.get(id=id)
@@ -101,6 +107,7 @@ def logout_check(request):
     return redirect('main-page')
 
 
+@permission_required('main.add_post')
 @login_required
 def post_create(request):
     if request.method == 'POST':
@@ -115,22 +122,34 @@ def post_create(request):
     return render(request, 'main/post_create.html', {'form': form})
 
 
-def post_edit(request, id):
-    post = Post.objects.get(id=id)
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            form.save()
-            return redirect('main-page')
+class PostEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    template_name = 'main/post_edit.html'
+    fields = ['title_uz', 'title_ru', 'title_en', 'content_uz', 'content_ru', 'content_en', 'photo']
 
-    form = PostForm(instance=post)
-    return render(request, 'main/post_edit.html', {'form': form, 'id': id, 'post': post})
+    def test_func(self):
+        obj = self.get_object()
+        return self.request.user.is_superuser or obj.user == self.request.user
 
 
-def posts(request, id):
-    post = Post.objects.get(id=id)
-    form = PostForm({'title': post.title, 'content': post.content, 'photo': post.photo})
-    return render(request, 'main/posts.html', {'id': id, 'post': post, 'form': form})
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'main/posts.html'
+    context_object_name = 'post'
+
+
+# @login_required
+# def post_edit(request, id):
+#     post = Post.objects.get(id=id)
+#     # user = User.objects.get(username=post.author)
+#     if request.method == 'POST':
+#         form = PostForm(request.POST, request.FILES, instance=post)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('main-page')
+#
+#     form = PostForm(instance=post)
+#     return render(request, 'main/post_edit.html', {'form': form, 'id': id, 'post': post, })
 
 
 def add_like(request, id):
@@ -143,11 +162,4 @@ def add_like(request, id):
 
     PostLIke(post=post, user=request.user).save()
 
-    return redirect('main-page')
-
-
-def diz_like(request, id):
-    post = Post.objects.get(id=id)
-    post.dislike += 1
-    post.save()
     return redirect('main-page')

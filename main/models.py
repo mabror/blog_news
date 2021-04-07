@@ -6,6 +6,9 @@ import os
 from io import BytesIO
 from django.core.files import File
 from django.utils.translation import get_language
+from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group
+from django.urls import reverse
 
 
 def convert_fn(self, file):
@@ -23,6 +26,7 @@ class Post(models.Model):
     content_ru = models.TextField(default=None, null=True, blank=True)
     content_en = models.TextField(default=None, null=True, blank=True)
     like = models.IntegerField(default=0)
+    dislike = models.IntegerField(default=0)
     post_added = models.DateTimeField(auto_now_add=True)
     photo = models.ImageField(default="download.jpeg",
                               upload_to=convert_fn,
@@ -59,6 +63,9 @@ class Post(models.Model):
         column = 'content_{}'.format(get_language())
         return getattr(self, column)
 
+    def get_absolute_url(self):
+        return reverse('posts-page', args=[str(self.id)])
+
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
@@ -70,4 +77,3 @@ class Comment(models.Model):
 class PostLIke(models.Model):
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
     post = models.ForeignKey(Post, on_delete=models.RESTRICT)
-

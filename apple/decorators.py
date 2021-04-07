@@ -21,3 +21,5 @@ def anonymous_required(redirect_url):
         return check_anonymous
 
     return _wrapped
+
+

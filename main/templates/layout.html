@@ -63,10 +63,11 @@
                          </li>
                             {% endif %}
                         {% endfor %}
-
+                    {% if perms.main.add_post %}
                         <li>
                             <a href="{% url 'post-create' %}">Create Post</a>
                         </li>
+                        {% endif %}
                         <li>
                             <a href="#">Profile: {{ user.username }}</a>
                         </li>

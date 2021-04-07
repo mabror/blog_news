@@ -3,21 +3,38 @@
 {% load crispy_forms_tags %}
 {% load i18n %}
 
-{% block body %} style="background-image: url('{% static 'main/img/home-bg.jpg' %}')" {% endblock %}
+
+
 
 {% block content %}
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-offset-6">
-                <form action="{% url 'posts-page' id %}" method="GET" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <h3>{{ form.title }}</h3>
-                    <img src="{{ post.photo.url }}" alt="" style="width: 800px;">
-                    <h6>{{ form.content }}</h6>
-                </form>
+    <header class="intro-header" style="background-image: url('{% static 'main/img/home-bg.jpg' %}')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="site-heading">
+                        <h1>{% trans 'Yangiliklar Blogi' %}</h1>
+                        <hr class="small">
+                        <span class="subheading">A Clean Blog Theme by Start Bootstrap</span>
+                    </div>
+                </div>
             </div>
         </div>
+    </header>
+
+    <div class="container">
+                    <div class="post-preview">
+                        <img class="mx-auto img-responsive" src="{{ post.photo.url }}" style="width: 400px;" alt="rasm">
+
+                            <h2 class="post-title">
+                                {{ post.title }}
+                            </h2>
+                            <h3 class="post-subtitle">
+                                {{ post.content }}
+                            </h3>
+                        <p class="post-meta">Posted by <i>{{ post.user.username }}</i> on {{ post.post_added | date:'d F, Y, H:m' }}</p>
+                    </div>
+                    <hr>
     </div>
+
 
 {% endblock %}

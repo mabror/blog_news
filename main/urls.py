@@ -11,13 +11,13 @@ urlpatterns = [
     path('login/', views.login_check, name='login'), 
     path('logout/', views.logout_check, name='logout'),
     path('post/', views.post_create, name='post-create'),
-    path('post-edit/<int:id>/', views.post_edit, name='post-edit'),
-    path('posts/<int:id>/', views.posts, name='posts-page'),
+    path('post-edit/<int:pk>/', views.PostEdit.as_view(), name='post-edit'),
+    path('posts/<int:pk>/', views.PostDetail.as_view(), name='posts-page'),
     path('comment/<int:id>/', views.comment, name='comment'),
     path('like/<int:id>/', views.add_like, name='like'),
-    path('diz_like/<int:id>/', views.diz_like, name='diz_like'),
 
-    # path('comment_v/', views.comment_v, name='comment_v')
+
+
 ]
 
 
