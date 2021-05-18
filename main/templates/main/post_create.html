@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load crispy_forms_filters %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% load i18n %}
@@ -9,10 +10,10 @@
 
     <div class="login" style="max-height: 400px; overflow: auto; min-width: 50%;">
         <h3 class="login__title title text-center">Create Post</h3>
-        <form action="{% url 'post-create' %}" method="POST" enctype="multipart/form-data">
+        <form data-url="{% url 'post-create' %}" method="POST" id="createForm" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form | crispy }}
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="button" id="createButton" class="btn btn-primary">Create</button>
         </form>
     </div>
 

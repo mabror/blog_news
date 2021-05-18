@@ -18,7 +18,7 @@ def convert_fn(self, file):
 
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='posts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     title_uz = models.CharField(max_length=100, null=True, blank=True, unique=True)
     title_ru = models.CharField(max_length=100, default=None, null=True, blank=True)
     title_en = models.CharField(max_length=100, default=None, null=True, blank=True)
@@ -68,12 +68,12 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)
-    post = models.ForeignKey(Post, on_delete=models.RESTRICT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     text = models.TextField()
     comment_date = models.DateTimeField(auto_now_add=True)
 
 
 class PostLIke(models.Model):
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)
-    post = models.ForeignKey(Post, on_delete=models.RESTRICT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)

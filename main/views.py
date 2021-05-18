@@ -1,5 +1,9 @@
 from os import name
+
+from django.forms import model_to_dict
+from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
+from django.views import View
 from .forms import LoginForm, RegisterForm, PostForm, CommentForm
 from django.contrib.auth import authenticate, login, logout
 from apple.decorators import anonymous_required
@@ -107,19 +111,36 @@ def logout_check(request):
     return redirect('main-page')
 
 
-@permission_required('main.add_post')
-@login_required
-def post_create(request):
-    if request.method == 'POST':
+# @permission_required('main.add_post')
+# @login_required
+# def post_create(request):
+#     if request.method == 'POST':
+#         form = PostForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             post = form.save(commit=False)
+#             post.user = request.user
+#             post.save()
+#             return redirect('main-page')
+#
+#     form = PostForm()
+#     return render(request, 'main/post_create.html', {'form': form})
+
+# @permission_required('main.add_post')
+# @login_required
+class PostCreate(LoginRequiredMixin, View, PermissionRequiredMixin):
+    def get(self, request):
+        form = PostForm()
+        return render(request, 'main/post_create.html', {'form': form})
+
+    def post(self, request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
             post.save()
+            return JsonResponse({'post': model_to_dict(post)})
+        else:
             return redirect('main-page')
-
-    form = PostForm()
-    return render(request, 'main/post_create.html', {'form': form})
 
 
 class PostEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -151,6 +172,20 @@ class PostDetail(DetailView):
 #     form = PostForm(instance=post)
 #     return render(request, 'main/post_edit.html', {'form': form, 'id': id, 'post': post, })
 
+# class AddLike(View):
+#     def get(self, request, id):
+#         if PostLIke.objects.filter(user=request.user, post_id=id).exists():
+#             return redirect('main-page')
+#
+#     def post(self, request):
+#         post = Post.objects.get(id=id)
+#         post.like += 1
+#         post.save()
+#
+#         PostLIke(post=post, user=request.user).save()
+#
+#         return redirect('main-page')
+
 
 def add_like(request, id):
     if PostLIke.objects.filter(user=request.user, post_id=id).exists():
@@ -163,3 +198,14 @@ def add_like(request, id):
     PostLIke(post=post, user=request.user).save()
 
     return redirect('main-page')
+
+
+class DeletePost(LoginRequiredMixin, View):
+    def get(self, request, id, *args, **kwargs):
+        if request.is_ajax():
+            post = Post.objects.get(id=id)
+            post.delete()
+            return JsonResponse({"message": "success"})
+        return JsonResponse({"message": "Wrong route"})
+
+
